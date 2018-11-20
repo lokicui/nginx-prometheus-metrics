@@ -1,0 +1,32 @@
+upstream general_search_backend { 
+    server 10.134.96.74:38012;      
+    server 10.134.96.75:38012;  
+    server 10.134.96.76:38012;
+    server 10.134.96.77:38012;               
+}  
+
+server {
+        listen       8012 default_server;
+        server_name  _;
+        root         /usr/local/openresty/nginx/html;
+
+        # Load configuration files for the default server block.
+
+        error_page 404 /404.html;
+            location = /40x.html {
+        }
+
+        error_page 500 502 503 504 /50x.html;
+            location = /50x.html {
+        }
+
+        location / {
+                root   /usr/local/openresty/nginx/html;
+                index  index.html index.htm;
+        }
+
+        location ~ ^/qunsearch {
+            proxy_pass http://general_search_backend;
+            proxy_read_timeout 5;
+        }
+}
